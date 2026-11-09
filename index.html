@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Event Photos · The Project Before the Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700&family=Inter+Tight:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAF5F2; --paper:#FFFFFF; --ink:#1F1F1F; --muted:#6F6A66; --line:#E6DED8;
+  --red:#E8432F; --red-ink:#C7321F; --red-soft:#FCE6E2;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+img{display:block}
+.wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+
+/* header */
+header{padding:44px 0 28px}
+.kicker{display:flex;align-items:center;gap:10px;font:600 13px/1.3 Inter;letter-spacing:.02em;color:var(--muted)}
+.kicker .dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex:none}
+h1{font:800 clamp(34px,6.4vw,68px)/.98 'Inter Tight',Inter,system-ui,sans-serif;letter-spacing:-.025em;text-transform:uppercase;margin:18px 0 14px;max-width:16ch}
+.sub{font:700 clamp(17px,2.2vw,22px)/1.3 'Inter Tight',Inter,system-ui,sans-serif;color:var(--red);max-width:44ch;margin:0 0 18px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font:500 14px Inter;color:var(--ink)}
+.meta span{white-space:nowrap}
+.intro{margin:22px 0 0;max-width:62ch;color:var(--muted);font-size:15px}
+
+/* people finder */
+.finder{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:18px 18px 14px;margin:8px 0 18px}
+.finder-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.finder h2{font:700 19px/1.2 'Inter Tight',Inter,system-ui,sans-serif;margin:0}
+.finder p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.faces{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:12px 10px}
+.face{border:0;background:none;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.face img{width:60px;height:60px;border-radius:50%;object-fit:cover;outline:2px solid transparent;outline-offset:2px;transition:outline-color .15s, transform .15s;background:var(--line)}
+.face:hover img{transform:scale(1.05)}
+.face .n{font:500 11px Inter;color:var(--muted);max-width:72px;text-align:center;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.face.on img{outline-color:var(--red)}
+.face.on .n{color:var(--red-ink);font-weight:600}
+.face .badge{position:absolute;top:-2px;right:calc(50% - 34px);background:var(--red);color:#fff;font:700 10px/16px Inter;border-radius:8px;min-width:16px;padding:0 4px;text-align:center;display:none}
+.face.on .badge{display:block}
+.more{margin-top:14px;background:none;border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:14px;font-weight:500}
+.more:hover{border-color:var(--ink)}
+
+/* toolbar */
+.bar{position:sticky;top:0;z-index:20;background:rgba(250,245,242,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin:0 -20px;padding:10px 20px}
+.bar-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.tabs{display:inline-flex;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{border:0;background:none;border-radius:999px;padding:7px 14px;font-weight:600;font-size:14px;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+.filter{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px}
+.chips{display:flex;gap:4px}
+.chips img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:2px solid var(--bg)}
+.chips img + img{margin-left:-10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper)}
+.seg button{border:0;background:none;padding:5px 10px;font-size:13px;font-weight:500;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--red-soft);color:var(--red-ink)}
+.link{border:0;background:none;padding:0;color:var(--red-ink);font-weight:600;font-size:14px;text-decoration:underline;text-underline-offset:3px}
+.count{margin-left:auto;color:var(--muted);font-size:14px}
+select{font:500 14px Inter;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:var(--paper);color:var(--ink)}
+
+/* grid */
+main{padding:18px 0 120px}
+.grid{columns:4 260px;column-gap:12px}
+.tile{break-inside:avoid;margin:0 0 12px;position:relative;border-radius:10px;overflow:hidden;background:var(--line);cursor:zoom-in}
+.tile img{width:100%;height:auto;transition:transform .3s}
+.tile:hover img{transform:scale(1.02)}
+.pick{position:absolute;top:8px;right:8px;width:32px;height:32px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);display:grid;place-items:center;color:#fff;opacity:.85;transition:all .15s}
+.pick svg{width:16px;height:16px;opacity:0}
+.tile:hover .pick,.pick.on{opacity:1}
+.pick.on{background:var(--red);border-color:var(--red)}
+.pick.on svg{opacity:1}
+.tnum{position:absolute;left:8px;bottom:8px;background:rgba(0,0,0,.5);color:#fff;font:600 11px Inter;padding:2px 7px;border-radius:6px}
+.empty{padding:60px 0;text-align:center;color:var(--muted)}
+
+/* groups */
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.group{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:12px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:border-color .15s}
+.group:hover{border-color:var(--ink)}
+.gfaces{display:flex}
+.gfaces img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--paper)}
+.gfaces img + img{margin-left:-12px}
+.gstrip{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.gstrip img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:6px}
+.gmeta{display:flex;justify-content:space-between;font-size:14px}
+.gmeta b{font-weight:600}
+.gmeta span{color:var(--muted)}
+
+/* selection bar */
+.cart{position:fixed;left:50%;bottom:16px;transform:translate(-50%,140%);transition:transform .25s;z-index:30;background:var(--ink);color:#fff;border-radius:999px;padding:8px 8px 8px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);max-width:calc(100% - 24px)}
+.cart.show{transform:translate(-50%,0)}
+.cart .txt{font-size:14px;white-space:nowrap}
+.cart .x{background:none;border:0;color:#bbb;font-size:13px;text-decoration:underline}
+.btn{border:0;border-radius:999px;background:var(--red);color:#fff;padding:9px 16px;font-weight:600;font-size:14px;white-space:nowrap}
+.btn:hover{background:var(--red-ink)}
+.btn.ghost{background:none;border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--ink);background:none}
+
+/* lightbox + dialog */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(18,16,15,.94);display:none;flex-direction:column}
+.overlay.open{display:flex}
+.lb-top{display:flex;align-items:center;gap:12px;padding:12px 16px;color:#fff}
+.lb-top .t{font-size:14px;color:#cfc8c3;margin-right:auto}
+.icon{background:rgba(255,255,255,.1);border:0;color:#fff;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.icon:hover{background:rgba(255,255,255,.2)}
+.lb-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;padding:0 8px}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px}
+.nav{position:absolute;top:50%;transform:translateY(-50%)}
+.nav.prev{left:12px}.nav.next{right:12px}
+.lb-foot{padding:12px 16px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;color:#cfc8c3;font-size:13px}
+.lb-foot .ppl{display:flex;gap:8px;align-items:center;margin-right:auto;flex-wrap:wrap}
+.lb-foot .ppl button{border:0;background:none;padding:0}
+.lb-foot .ppl img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,.3)}
+.lb-foot .ppl button:hover img{border-color:#fff}
+.lb-sel.on{background:#fff;color:var(--ink)}
+
+.modal{position:fixed;inset:0;z-index:60;background:rgba(18,16,15,.55);display:none;align-items:center;justify-content:center;padding:16px}
+.modal.open{display:flex}
+.sheet{background:var(--paper);border-radius:18px;max-width:520px;width:100%;padding:24px;max-height:90vh;overflow:auto}
+.sheet h3{font:800 24px/1.1 'Inter Tight',Inter,system-ui,sans-serif;margin:0 0 8px}
+.sheet p{margin:0 0 12px;color:var(--muted);font-size:15px}
+.addr{font:600 17px Inter;color:var(--ink);user-select:all}
+.me{display:flex;align-items:center;gap:14px;background:var(--red-soft);border-radius:12px;padding:12px 14px;margin:0 0 16px}
+.me img{width:52px;height:52px;border-radius:50%;object-fit:cover;flex:none;outline:2px solid var(--red);outline-offset:2px}
+.me-txt{display:flex;flex-direction:column;font-size:14px;line-height:1.35;margin-right:auto}
+.me-txt b{font-weight:600;color:var(--ink)}
+.me-txt span{color:var(--muted)}
+@media (max-width:600px){.me{flex-wrap:wrap}.me .btn{width:100%}}
+textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:10px;padding:10px;font:13px/1.5 ui-monospace,Menlo,monospace;background:var(--bg);color:var(--ink);resize:vertical}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.note{font-size:13px;color:var(--muted);margin-top:10px}
+
+footer{border-top:1px solid var(--line);padding:28px 0 100px;color:var(--muted);font-size:14px}
+footer h4{font:700 14px 'Inter Tight',Inter,system-ui,sans-serif;color:var(--ink);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.fcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+footer a{color:var(--red-ink)}
+
+@media (max-width:600px){
+  header{padding:28px 0 18px}
+  .faces{grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:10px 6px}
+  .face img{width:52px;height:52px}
+  .face .badge{right:calc(50% - 30px)}
+  .grid{columns:2;column-gap:8px}.tile{margin-bottom:8px}
+  .count{margin-left:0;width:100%}
+  .nav{display:none}
+}
+
+/* poster header */
+.poster{padding:56px 0 34px;max-width:1000px}
+.poster .aia{width:min(380px,70vw);height:auto;margin:0 0 56px}
+.poster h1{font:800 clamp(30px,5.6vw,62px)/1.02 'Inter Tight',Inter,system-ui,sans-serif;letter-spacing:-.03em;text-transform:uppercase;margin:0 0 18px;max-width:none}
+.poster .sub{font:700 clamp(18px,2.4vw,27px)/1.25 'Inter Tight',Inter,system-ui,sans-serif;color:var(--red);max-width:40ch;margin:0}
+.panel{display:grid;grid-template-columns:1fr 1fr;margin:64px 0 60px;max-width:900px}
+.panel .col{display:flex;flex-direction:column;gap:42px;padding:6px 0}
+.panel .col:first-child{border-right:2px solid var(--ink);padding-right:28px}
+.panel .col:last-child{padding-left:56px}
+.pn{display:flex;flex-direction:column;font:400 clamp(15px,1.8vw,19px)/1.32 'Archivo','Inter',system-ui,sans-serif;letter-spacing:.03em}
+.pn b{font-weight:700}
+.pn em{font-style:normal;font-weight:700;color:#7A7672}
+.when{margin:0 0 40px}
+.when .date{font:800 clamp(24px,4vw,44px)/1.05 'Inter Tight',Inter,system-ui,sans-serif;letter-spacing:-.025em;text-transform:uppercase}
+.when .where{font:700 clamp(15px,2vw,22px)/1.3 'Archivo',Inter,system-ui,sans-serif;color:var(--red);letter-spacing:.03em;margin-top:8px}
+.sponsors{border-top:2px solid #8a8580;padding-top:26px;text-align:center}
+.sponsors p{font:700 15px 'Archivo',Inter,system-ui,sans-serif;letter-spacing:.04em;margin:0 0 22px}
+.logos{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-around;gap:22px 34px}
+.logos img{height:var(--h);width:auto;max-width:44vw}
+.connect{margin-top:56px}
+.connect h2{font:800 clamp(24px,3.2vw,34px)/1.1 'Inter Tight',Inter,system-ui,sans-serif;letter-spacing:-.02em;margin:10px 0 18px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media (max-width:700px){.cards{grid-template-columns:1fr}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;gap:10px}
+.card img{height:var(--h);width:auto;max-width:100%;align-self:flex-start;margin-bottom:6px}
+.card h3{font:700 17px/1.25 'Inter Tight',Inter,system-ui,sans-serif;margin:0}
+.card p{margin:0;color:var(--muted);font-size:14.5px;flex:1}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.links .btn{text-decoration:none;font-size:13.5px;padding:8px 14px}
+.links .btn.ghost{color:var(--ink)}
+.addrline{font-size:13px;color:var(--muted);user-select:all}
+.photos-intro{margin-top:56px}
+.jumpTop{display:inline-block;margin-top:24px;text-decoration:none}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font:700 12px Inter;letter-spacing:.12em;text-transform:uppercase;color:var(--red)}
+.eyebrow::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--red)}
+.photos-intro h2{font:800 clamp(26px,3.4vw,36px)/1.1 'Inter Tight',Inter,system-ui,sans-serif;letter-spacing:-.02em;margin:10px 0 8px}
+.photos-intro p{margin:0;max-width:62ch;color:var(--muted)}
+.credit{display:flex;align-items:center;gap:10px;margin-top:10px}
+.credit img{height:24px;width:auto}
+@media (max-width:600px){
+  .poster{padding:32px 0 22px}
+  .poster .aia{margin-bottom:34px}
+  .panel{grid-template-columns:1fr;margin:40px 0}
+  .panel .col{gap:22px;padding:0}
+  .panel .col:first-child{border-right:0;padding-right:0;border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:22px}
+  .panel .col:last-child{padding-left:0}
+  .logos img{height:calc(var(--h) * .8)}
+  .photos-intro{margin-top:40px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="poster">
+    <img class="aia" src="/logos/aia.png" alt="AIA New York, Committee on Residential Architecture">
+    <h1>The Project Before the Project:</h1>
+    <p class="sub">A multidisciplinary conversation about the decisions that shape exceptional residential projects.</p>
+    <a class="btn jumpTop" href="#" onclick="document.querySelector('.finder').scrollIntoView({behavior:'smooth'});return false;">Find your photos ↓</a>
+    <div class="panel">
+      <div class="col">
+        <div class="pn"><b>Mark Armstrong</b><span>Regional Principal</span><em>Peak Projects</em></div>
+        <div class="pn"><b>Jeff Grossman</b><span>Partner</span><em>Stradley Ronan</em></div>
+        <div class="pn"><b>Elena Ratcheva</b><span>Director of Art Advisory</span><em>Fine Arts Group</em></div>
+      </div>
+      <div class="col">
+        <div class="pn"><b>Johnny Donadic</b><span>Principal</span><em>S. Donadic Inc</em></div>
+        <div class="pn"><b>Jill Arnold Bull</b><span>President of Private Risk Solutions</span><em>Lockton</em></div>
+        <div class="pn"><b>Terrence Schroeder</b><span>Principal and Owner</span><em>TenBerke</em></div>
+      </div>
+    </div>
+    <div class="when">
+      <div class="date">November 5, 2026 | 6PM – 8PM</div>
+      <div class="where">121 Varick Street, Tenth Floor, New York, NY 10012</div>
+    </div>
+    <div class="sponsors">
+      <p>Thank you to our sponsors, partners and organizers:</p>
+      <div class="logos">
+        <img src="/logos/salon.png" alt="Salon Art + Design" style="--h:46px">
+        <img src="/logos/peak.png" alt="Peak Projects" style="--h:20px">
+        <img src="/logos/cravtsman.png" alt="Cravtsman" style="--h:40px">
+        <img src="/logos/nanz.png" alt="NANZ" style="--h:38px">
+      </div>
+    </div>
+    <section class="connect" aria-labelledby="ch">
+      <span class="eyebrow">Keep the conversation going</span>
+      <h2 id="ch">Connect with the people behind tonight</h2>
+      <div class="cards">
+        <article class="card">
+          <img src="/logos/aia.png" alt="AIA New York Committee on Residential Architecture" style="--h:58px">
+          <h3>Organizer · Events &amp; membership</h3>
+          <p>The committee hosts talks, tours and gatherings for everyone who shapes residential work, not just architects. Allied professionals and design enthusiasts can join AIA New York too.</p>
+          <div class="links">
+            <a class="btn" href="https://calendar.aiany.org/" target="_blank" rel="noopener">AIA NY calendar</a>
+            <a class="btn ghost" href="https://www.aiany.org/membership/join/" target="_blank" rel="noopener">How to join</a>
+            <a class="btn ghost" href="https://www.aiany.org/membership/committees/" target="_blank" rel="noopener">All committees</a>
+          </div>
+        </article>
+        <article class="card">
+          <img src="/logos/peak.png" alt="Peak Projects" style="--h:16px">
+          <h3>Owner&rsquo;s representative</h3>
+          <p>Expert oversight and client advocacy for high-end custom residential, hospitality and commercial projects, from planning through construction.</p>
+          <div class="links">
+            <a class="btn" href="mailto:jhenry@peakprojects.com?subject=The%20Project%20Before%20the%20Project">Email Jessica Henry</a>
+            <a class="btn ghost" href="https://www.peakprojects.com" target="_blank" rel="noopener">Website</a>
+            <a class="btn ghost" href="https://www.peakprojects.com/contact" target="_blank" rel="noopener">Contact page</a>
+          </div>
+          <span class="addrline">Jessica Henry · jhenry@peakprojects.com</span>
+        </article>
+        <article class="card">
+          <img src="/logos/cravtsman.png" alt="Cravtsman" style="--h:34px">
+          <h3>Lighting · Audio · Video</h3>
+          <p>Lighting, audio and video for exceptional homes, designed in from the start and cared for long after move-in.</p>
+          <div class="links">
+            <a class="btn" href="mailto:joe@cravtsman.com?subject=The%20Project%20Before%20the%20Project">Email Joe Harris</a>
+            <a class="btn ghost" href="https://www.cravtsman.com" target="_blank" rel="noopener">Website</a>
+          </div>
+          <span class="addrline">Joe Harris · joe@cravtsman.com</span>
+        </article>
+        <article class="card">
+          <img src="/logos/nanz.png" alt="NANZ" style="--h:32px">
+          <h3>Custom hardware</h3>
+          <p>Fine custom architectural hardware (handles, hinges, locks and fittings), designed and made in New York.</p>
+          <div class="links">
+            <a class="btn" href="mailto:jghersi@nanz.com?subject=The%20Project%20Before%20the%20Project">Email Jenn Ghersi</a>
+            <a class="btn ghost" href="https://www.nanz.com" target="_blank" rel="noopener">Website</a>
+          </div>
+          <span class="addrline">Jenn Ghersi · jghersi@nanz.com</span>
+        </article>
+      </div>
+    </section>
+    <div class="photos-intro">
+      <span class="eyebrow">Event photos</span>
+      <h2>Thanks for joining us.</h2>
+      <p>Tap your face to see every photo you're in. Select a few people to find shots you're in together, or browse by group. Want the full-resolution file? Tick the photos and request them.</p>
+    </div>
+  </header>
+
+  <section class="finder" aria-labelledby="fh">
+    <div class="finder-head">
+      <div><h2 id="fh">Find yourself</h2><p id="finderHint">Tap one or more faces.</p></div>
+      <button class="btn" id="jump" type="button" hidden></button>
+    </div>
+    <div class="me" id="meCard" hidden>
+      <img id="meFace" alt="">
+      <div class="me-txt"><b>Is this you?</b><span>Add your name and company to this face. Tags are reviewed before they appear.</span></div>
+      <button class="btn" id="meBtn" type="button">This is me</button>
+    </div>
+    <div class="faces" id="faces"></div>
+    <button class="more" id="moreBtn" type="button"></button>
+  </section>
+
+  <div class="bar">
+    <div class="bar-row">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tabAll" aria-selected="true" type="button">All photos</button>
+        <button role="tab" id="tabGroups" aria-selected="false" type="button">Groups</button>
+      </div>
+      <div class="filter" id="filter" hidden>
+        <div class="chips" id="chips"></div>
+        <div class="seg" id="modeSeg" role="group" aria-label="Match">
+          <button type="button" data-mode="all" aria-pressed="true">Together</button>
+          <button type="button" data-mode="any" aria-pressed="false">Any of them</button>
+        </div>
+        <button class="link" id="clearBtn" type="button">Clear</button>
+      </div>
+      <label class="filter" id="sortWrap" hidden>Sort
+        <select id="groupSort">
+          <option value="photos">Most photos</option>
+          <option value="size">Largest groups</option>
+        </select>
+      </label>
+      <div class="count" id="count"></div>
+    </div>
+  </div>
+
+  <main>
+    <div class="grid" id="grid"></div>
+    <div class="groups" id="groups" hidden></div>
+    <div class="empty" id="empty" hidden>No photos match that selection. Try “Any of them”.</div>
+  </main>
+
+  <footer>
+    <div class="fcols">
+      <div>
+        <h4>Full-resolution files</h4>
+        Photos here are web-sized. To request originals, email <a href="mailto:info@cravtsman.com">info@cravtsman.com</a> with the photo numbers.
+      </div>
+      <div>
+        <h4>About face search</h4>
+        Faces in these photos were grouped automatically so attendees can find their pictures. Names appear only when the person asks to be tagged and the request is approved. To have a photo or your face group removed, email <a href="mailto:info@cravtsman.com">info@cravtsman.com</a>.
+      </div>
+      <div>
+        <h4>Photos shared by</h4>
+        <div class="credit"><img src="/logos/cravtsman.png" alt="Cravtsman, Bespoke Technology &amp; Care"></div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<div class="cart" id="cart">
+  <span class="txt" id="cartTxt"></span>
+  <button class="x" id="cartClear" type="button">Clear</button>
+  <button class="btn" id="requestBtn" type="button">Request high-res</button>
+</div>
+
+<div class="overlay" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+  <div class="lb-top">
+    <span class="t" id="lbTitle"></span>
+    <button class="icon" id="lbClose" type="button" aria-label="Close">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="lb-stage">
+    <button class="icon nav prev" id="lbPrev" type="button" aria-label="Previous"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <img id="lbImg" alt="">
+    <button class="icon nav next" id="lbNext" type="button" aria-label="Next"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div class="lb-foot">
+    <div class="ppl" id="lbPeople"></div>
+    <button class="btn ghost lb-sel" id="lbSel" type="button" style="color:#fff;border-color:rgba(255,255,255,.35)"></button>
+  </div>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mh">
+  <div class="sheet">
+    <h3 id="mh"></h3>
+    <p id="mIntro"></p>
+    <textarea id="reqText" readonly></textarea>
+    <div class="actions">
+      <a class="btn" id="mailBtn" href="#" style="text-decoration:none">Open in email</a>
+      <button class="btn ghost" id="copyBtn" type="button">Copy text</button>
+      <button class="btn ghost" id="modalClose" type="button">Close</button>
+    </div>
+    <div class="note" id="copyNote">If the email button doesn't open your mail app, copy the list and email it to info@cravtsman.com.</div>
+  </div>
+</div>
+
+<script>
+const DATA = {"people":[{"id":2,"name":"","photos":[2,3,13,29,30,31,41,69,83,113,114,121,130,134,147,148,149,177,182,192,200]},{"id":3,"name":"","photos":[7,8,32,36,56,63,65,93,121,123,152,158,160,164,165,184,191,206,219,222]},{"id":1,"name":"","photos":[1,4,5,37,44,45,49,53,54,64,77,121,126,169,180,215,225]},{"id":5,"name":"","photos":[4,5,29,37,74,121,145,161,169,171,176,187,197,203,204,208,223]},{"id":8,"name":"","photos":[44,45,49,59,64,107,121,168,169,180,196,197,206,207,208,219,225]},{"id":21,"name":"","photos":[51,59,61,77,79,106,112,121,162,163,176,192,200]},{"id":71,"name":"","photos":[43,76,121,151,155,158,160,164,165,184,186,191,207]},{"id":32,"name":"","photos":[21,68,87,93,120,133,134,138,159,192,200,220]},{"id":9,"name":"","photos":[1,16,59,67,148,149,150,151,152,155,162]},{"id":20,"name":"","photos":[35,39,47,87,93,120,134,138,140,200,224]},{"id":22,"name":"","photos":[25,40,60,94,99,113,114,154,195,226,227]},{"id":41,"name":"","photos":[40,60,94,99,113,114,154,195,205,226,227]},{"id":6,"name":"","photos":[18,41,60,69,70,149,167,199,216,221]},{"id":10,"name":"","photos":[7,8,13,17,88,96,132,133,134,159]},{"id":12,"name":"","photos":[2,3,15,34,92,96,115,129,174,188]},{"id":4,"name":"","photos":[3,7,8,15,57,58,93,115,174]},{"id":25,"name":"","photos":[55,59,60,89,107,116,153,193,226]},{"id":13,"name":"","photos":[30,59,67,94,177,200,224,232]},{"id":27,"name":"","photos":[14,16,98,99,137,158,217,226]},{"id":28,"name":"","photos":[10,60,102,103,112,139,145,198]},{"id":31,"name":"","photos":[13,26,122,174,175,214,230,231]},{"id":11,"name":"","photos":[20,47,52,61,183,192,200]},{"id":14,"name":"","photos":[22,62,70,80,112,209,221]},{"id":30,"name":"","photos":[40,60,95,97,195,205,227]},{"id":33,"name":"","photos":[40,42,77,84,90,154,175]},{"id":34,"name":"","photos":[9,24,82,109,226,227,228]},{"id":63,"name":"","photos":[39,120,125,135,156,157,182]},{"id":73,"name":"","photos":[11,110,112,142,194,205,216]},{"id":75,"name":"","photos":[81,83,110,112,128,152,226]},{"id":15,"name":"","photos":[19,40,59,146,194,205]},{"id":24,"name":"","photos":[59,60,75,94,195,227]},{"id":35,"name":"","photos":[9,60,109,153,175,194]},{"id":62,"name":"","photos":[60,136,167,199,216,221]},{"id":7,"name":"","photos":[27,30,31,71,72]},{"id":16,"name":"","photos":[14,42,58,90,106]},{"id":23,"name":"","photos":[47,52,61,183,200]},{"id":26,"name":"","photos":[39,52,100,193,226]},{"id":29,"name":"","photos":[40,60,154,194,205]},{"id":38,"name":"","photos":[55,59,89,153,193]},{"id":60,"name":"","photos":[36,86,92,131,134]},{"id":77,"name":"","photos":[94,144,157,193,226]},{"id":17,"name":"","photos":[17,18,47,183]},{"id":18,"name":"","photos":[28,69,70,221]},{"id":36,"name":"","photos":[15,60,115,189]},{"id":37,"name":"","photos":[20,60,101,226]},{"id":39,"name":"","photos":[23,59,179,181]},{"id":40,"name":"","photos":[22,62,201,209]},{"id":48,"name":"","photos":[24,202,211,229]},{"id":66,"name":"","photos":[48,125,170,185]},{"id":70,"name":"","photos":[40,146,154,195]},{"id":76,"name":"","photos":[138,156,177,182]},{"id":78,"name":"","photos":[104,159,190,195]},{"id":85,"name":"","photos":[102,103,106,202]},{"id":19,"name":"","photos":[4,5,37]},{"id":47,"name":"","photos":[21,173,205]},{"id":52,"name":"","photos":[62,201,209]},{"id":58,"name":"","photos":[15,115,136]},{"id":64,"name":"","photos":[19,135,144]},{"id":69,"name":"","photos":[33,100,159]},{"id":80,"name":"","photos":[101,146,195]},{"id":83,"name":"","photos":[124,172,205]},{"id":87,"name":"","photos":[195,226,227]},{"id":44,"name":"","photos":[21,178]},{"id":55,"name":"","photos":[28,111]},{"id":56,"name":"","photos":[50,172]},{"id":59,"name":"","photos":[60,199]},{"id":61,"name":"","photos":[33,85]},{"id":68,"name":"","photos":[10,139]},{"id":74,"name":"","photos":[47,111]},{"id":79,"name":"","photos":[144,194]},{"id":81,"name":"","photos":[170,185]},{"id":82,"name":"","photos":[170,185]},{"id":84,"name":"","photos":[196,197]},{"id":86,"name":"","photos":[212,213]},{"id":88,"name":"","photos":[102,103]},{"id":91,"name":"","photos":[158,218]},{"id":95,"name":"","photos":[90,154]},{"id":42,"name":"","photos":[28]},{"id":43,"name":"","photos":[28]},{"id":45,"name":"","photos":[23]},{"id":46,"name":"","photos":[26]},{"id":49,"name":"","photos":[16]},{"id":50,"name":"","photos":[26]},{"id":51,"name":"","photos":[67]},{"id":53,"name":"","photos":[66]},{"id":54,"name":"","photos":[28]},{"id":57,"name":"","photos":[16]},{"id":65,"name":"","photos":[59]},{"id":67,"name":"","photos":[72]},{"id":72,"name":"","photos":[58]},{"id":89,"name":"","photos":[142]},{"id":90,"name":"","photos":[144]},{"id":92,"name":"","photos":[227]},{"id":93,"name":"","photos":[76]},{"id":94,"name":"","photos":[77]},{"id":96,"name":"","photos":[91]},{"id":97,"name":"","photos":[93]},{"id":98,"name":"","photos":[97]},{"id":99,"name":"","photos":[109]},{"id":100,"name":"","photos":[116]},{"id":101,"name":"","photos":[120]},{"id":102,"name":"","photos":[122]},{"id":103,"name":"","photos":[122]}],"photos":[{"id":1,"file":"DSC08724.jpg","w":427,"h":640,"people":[1,9]},{"id":2,"file":"DSC08726.jpg","w":427,"h":640,"people":[2,12]},{"id":3,"file":"DSC08729.jpg","w":427,"h":640,"people":[2,4,12]},{"id":4,"file":"DSC08753.jpg","w":427,"h":640,"people":[1,5,19]},{"id":5,"file":"DSC08756.jpg","w":427,"h":640,"people":[1,5,19]},{"id":6,"file":"DSC08757.jpg","w":427,"h":640,"people":[]},{"id":7,"file":"DSC08781.jpg","w":427,"h":640,"people":[3,4,10]},{"id":8,"file":"DSC08783.jpg","w":427,"h":640,"people":[3,4,10]},{"id":9,"file":"DSC08810.jpg","w":427,"h":640,"people":[34,35]},{"id":10,"file":"DSC08811.jpg","w":427,"h":640,"people":[28,68]},{"id":11,"file":"DSC08813.jpg","w":427,"h":640,"people":[73]},{"id":12,"file":"DSC08814.jpg","w":427,"h":640,"people":[]},{"id":13,"file":"DSC08834.jpg","w":427,"h":640,"people":[2,10,31]},{"id":14,"file":"DSC08835.jpg","w":427,"h":640,"people":[16,27]},{"id":15,"file":"DSC08843.jpg","w":640,"h":427,"people":[4,12,36,58]},{"id":16,"file":"DSC08871.jpg","w":427,"h":640,"people":[9,27,49,57]},{"id":17,"file":"DSC08872.jpg","w":428,"h":640,"people":[10,17]},{"id":18,"file":"DSC08900.jpg","w":427,"h":640,"people":[6,17]},{"id":19,"file":"DSC08903.jpg","w":427,"h":640,"people":[15,64]},{"id":20,"file":"DSC08907.jpg","w":427,"h":640,"people":[11,37]},{"id":21,"file":"DSC08910.jpg","w":427,"h":640,"people":[32,44,47]},{"id":22,"file":"DSC08936.jpg","w":427,"h":640,"people":[14,40]},{"id":23,"file":"DSC08938.jpg","w":427,"h":640,"people":[39,45]},{"id":24,"file":"DSC08939.jpg","w":427,"h":640,"people":[34,48]},{"id":25,"file":"DSC08945.jpg","w":427,"h":640,"people":[22]},{"id":26,"file":"DSC08979.jpg","w":427,"h":640,"people":[31,46,50]},{"id":27,"file":"DSC08985.jpg","w":427,"h":640,"people":[7]},{"id":28,"file":"DSC09003.jpg","w":427,"h":640,"people":[18,42,43,54,55]},{"id":29,"file":"DSC09005.jpg","w":427,"h":640,"people":[2,5]},{"id":30,"file":"DSC09006.jpg","w":427,"h":640,"people":[2,7,13]},{"id":31,"file":"DSC09009.jpg","w":427,"h":640,"people":[2,7]},{"id":32,"file":"AIA 2026-11-06 at 1.38.43\u202fPM.jpg","w":355,"h":640,"people":[3]},{"id":33,"file":"AIA 2026-11-06 at 1.39.08\u202fPM.jpg","w":355,"h":640,"people":[61,69]},{"id":34,"file":"AIA 2026-11-06 at 1.39.40\u202fPM.jpg","w":355,"h":640,"people":[12]},{"id":35,"file":"AIA 2026-11-06 at 1.41.50\u202fPM.jpg","w":355,"h":640,"people":[20]},{"id":36,"file":"AIA 2026-11-06 at 1.41.59\u202fPM.jpg","w":355,"h":640,"people":[3,60]},{"id":37,"file":"AIA 2026-11-06 at 1.42.32\u202fPM.jpg","w":355,"h":640,"people":[1,5,19]},{"id":38,"file":"AIA 2026-11-06 at 1.44.56\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":39,"file":"AIA 2026-11-06 at 1.45.09\u202fPM.jpg","w":355,"h":640,"people":[20,26,63]},{"id":40,"file":"AIA 2026-11-06 at 1.47.32\u202fPM.jpg","w":355,"h":640,"people":[15,22,29,30,33,41,70]},{"id":41,"file":"AIA 2026-11-06 at 1.47.56\u202fPM.jpg","w":355,"h":640,"people":[2,6]},{"id":42,"file":"AIA 2026-11-06 at 1.49.15\u202fPM.jpg","w":355,"h":640,"people":[16,33]},{"id":43,"file":"AIA 2026-11-06 at 1.49.40\u202fPM.jpg","w":355,"h":640,"people":[71]},{"id":44,"file":"AIA 2026-11-06 at 1.49.50\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":45,"file":"AIA 2026-11-06 at 1.50.01\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":46,"file":"AIA 2026-11-06 at 1.51.28\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":47,"file":"AIA 2026-11-06 at 1.51.46\u202fPM.jpg","w":355,"h":640,"people":[11,17,20,23,74]},{"id":48,"file":"AIA 2026-11-06 at 1.51.55\u202fPM.jpg","w":355,"h":640,"people":[66]},{"id":49,"file":"AIA 2026-11-06 at 1.52.03\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":50,"file":"AIA 2026-11-06 at 1.53.16\u202fPM.jpg","w":355,"h":640,"people":[56]},{"id":51,"file":"AIA 2026-11-06 at 1.53.24\u202fPM.jpg","w":355,"h":640,"people":[21]},{"id":52,"file":"AIA 2026-11-06 at 1.53.32\u202fPM.jpg","w":355,"h":640,"people":[11,23,26]},{"id":53,"file":"AIA 2026-11-06 at 1.55.43\u202fPM.jpg","w":355,"h":640,"people":[1]},{"id":54,"file":"AIA 2026-11-06 at 1.55.55\u202fPM.jpg","w":355,"h":640,"people":[1]},{"id":55,"file":"AIA 2026-11-06 at 1.56.03\u202fPM.jpg","w":355,"h":640,"people":[25,38]},{"id":56,"file":"AIA 2026-11-06 at 1.56.17\u202fPM.jpg","w":355,"h":640,"people":[3]},{"id":57,"file":"AIA 2026-11-06 at 1.57.42\u202fPM.jpg","w":355,"h":640,"people":[4]},{"id":58,"file":"AIA 2026-11-06 at 1.57.56\u202fPM.jpg","w":355,"h":640,"people":[4,16,72]},{"id":59,"file":"AIA 2026-11-06 at 1.59.52\u202fPM.jpg","w":640,"h":358,"people":[8,9,13,15,21,24,25,38,39,65]},{"id":60,"file":"AIA 2026-11-06 at 2.00.06\u202fPM.jpg","w":640,"h":359,"people":[6,22,24,25,28,29,30,35,36,37,41,59,62]},{"id":61,"file":"AIA 2026-11-06 at 2.00.31\u202fPM.jpg","w":355,"h":640,"people":[11,21,23]},{"id":62,"file":"AIA 2026-11-06 at 2.02.51\u202fPM.jpg","w":355,"h":640,"people":[14,40,52]},{"id":63,"file":"AIA 2026-11-06 at 2.03.05\u202fPM.jpg","w":355,"h":640,"people":[3]},{"id":64,"file":"AIA 2026-11-06 at 2.03.16\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":65,"file":"AIA 2026-11-06 at 2.04.33\u202fPM.jpg","w":355,"h":640,"people":[3]},{"id":66,"file":"AIA 2026-11-06 at 2.05.03\u202fPM.jpg","w":355,"h":640,"people":[53]},{"id":67,"file":"AIA 2026-11-06 at 2.05.12\u202fPM.jpg","w":355,"h":640,"people":[9,13,51]},{"id":68,"file":"AIA 2026-11-06 at 2.07.08\u202fPM.jpg","w":355,"h":640,"people":[32]},{"id":69,"file":"AIA 2026-11-06 at 2.07.18\u202fPM.jpg","w":355,"h":640,"people":[2,6,18]},{"id":70,"file":"AIA 2026-11-06 at 2.07.27\u202fPM.jpg","w":355,"h":640,"people":[6,14,18]},{"id":71,"file":"AIA 2026-11-06 at 2.09.13\u202fPM.jpg","w":355,"h":640,"people":[7]},{"id":72,"file":"AIA 2026-11-06 at 2.09.18\u202fPM.jpg","w":355,"h":640,"people":[7,67]},{"id":73,"file":"AIA 2026-11-06 at 2.10.04\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":74,"file":"AIA 2026-11-06 at 2.10.16\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":75,"file":"AIA 2026-11-06 at 2.10.27\u202fPM.jpg","w":355,"h":640,"people":[24]},{"id":76,"file":"DSC08715.jpg","w":427,"h":640,"people":[71,93]},{"id":77,"file":"DSC08717.jpg","w":427,"h":640,"people":[1,21,33,94]},{"id":78,"file":"DSC08719.jpg","w":427,"h":640,"people":[]},{"id":79,"file":"DSC08721.jpg","w":427,"h":640,"people":[21]},{"id":80,"file":"DSC08722.jpg","w":427,"h":640,"people":[14]},{"id":81,"file":"DSC08733.jpg","w":427,"h":640,"people":[75]},{"id":82,"file":"DSC08737.jpg","w":427,"h":640,"people":[34]},{"id":83,"file":"DSC08738.jpg","w":427,"h":640,"people":[2,75]},{"id":84,"file":"DSC08739.jpg","w":427,"h":640,"people":[33]},{"id":85,"file":"DSC08740.jpg","w":427,"h":640,"people":[61]},{"id":86,"file":"DSC08741.jpg","w":427,"h":640,"people":[60]},{"id":87,"file":"DSC08743.jpg","w":427,"h":640,"people":[20,32]},{"id":88,"file":"DSC08747.jpg","w":427,"h":640,"people":[10]},{"id":89,"file":"DSC08749.jpg","w":427,"h":640,"people":[25,38]},{"id":90,"file":"DSC08750.jpg","w":427,"h":640,"people":[16,33,95]},{"id":91,"file":"DSC08760.jpg","w":427,"h":640,"people":[96]},{"id":92,"file":"DSC08762.jpg","w":427,"h":640,"people":[12,60]},{"id":93,"file":"DSC08765.jpg","w":427,"h":640,"people":[3,4,20,32,97]},{"id":94,"file":"DSC08769.jpg","w":427,"h":640,"people":[13,22,24,41,77]},{"id":95,"file":"DSC08770.jpg","w":427,"h":640,"people":[30]},{"id":96,"file":"DSC08774.jpg","w":427,"h":640,"people":[10,12]},{"id":97,"file":"DSC08780.jpg","w":427,"h":640,"people":[30,98]},{"id":98,"file":"DSC08785.jpg","w":427,"h":640,"people":[27]},{"id":99,"file":"DSC08792.jpg","w":427,"h":640,"people":[22,27,41]},{"id":100,"file":"DSC08793.jpg","w":427,"h":640,"people":[26,69]},{"id":101,"file":"DSC08796.jpg","w":427,"h":640,"people":[37,80]},{"id":102,"file":"DSC08797.jpg","w":427,"h":640,"people":[28,85,88]},{"id":103,"file":"DSC08802.jpg","w":427,"h":640,"people":[28,85,88]},{"id":104,"file":"DSC08804.jpg","w":427,"h":640,"people":[78]},{"id":105,"file":"DSC08805.jpg","w":427,"h":640,"people":[]},{"id":106,"file":"DSC08808.jpg","w":427,"h":640,"people":[16,21,85]},{"id":107,"file":"DSC08809.jpg","w":427,"h":640,"people":[8,25]},{"id":108,"file":"DSC08816.jpg","w":427,"h":640,"people":[]},{"id":109,"file":"DSC08819.jpg","w":427,"h":640,"people":[34,35,99]},{"id":110,"file":"DSC08821.jpg","w":427,"h":640,"people":[73,75]},{"id":111,"file":"DSC08823.jpg","w":427,"h":640,"people":[55,74]},{"id":112,"file":"DSC08826.jpg","w":427,"h":640,"people":[14,21,28,73,75]},{"id":113,"file":"DSC08829.jpg","w":427,"h":640,"people":[2,22,41]},{"id":114,"file":"DSC08831.jpg","w":427,"h":640,"people":[2,22,41]},{"id":115,"file":"DSC08840.jpg","w":427,"h":640,"people":[4,12,36,58]},{"id":116,"file":"DSC08846.jpg","w":427,"h":640,"people":[25,100]},{"id":117,"file":"DSC08848.jpg","w":427,"h":640,"people":[]},{"id":118,"file":"DSC08849.jpg","w":427,"h":640,"people":[]},{"id":119,"file":"DSC08850.jpg","w":427,"h":640,"people":[]},{"id":120,"file":"DSC08852.jpg","w":427,"h":640,"people":[20,32,63,101]},{"id":121,"file":"DSC08860.jpg","w":427,"h":640,"people":[1,2,3,5,8,21,71]},{"id":122,"file":"DSC08864.jpg","w":427,"h":640,"people":[31,102,103]},{"id":123,"file":"DSC08867.jpg","w":427,"h":640,"people":[3]},{"id":124,"file":"DSC08874.jpg","w":427,"h":640,"people":[83]},{"id":125,"file":"DSC08875.jpg","w":427,"h":640,"people":[63,66]},{"id":126,"file":"AIA 2026-11-06 at 1.38.33\u202fPM.jpg","w":355,"h":640,"people":[1]},{"id":127,"file":"AIA 2026-11-06 at 1.39.48\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":128,"file":"AIA 2026-11-06 at 1.39.56\u202fPM.jpg","w":355,"h":640,"people":[75]},{"id":129,"file":"AIA 2026-11-06 at 1.40.29\u202fPM.jpg","w":355,"h":640,"people":[12]},{"id":130,"file":"AIA 2026-11-06 at 1.40.36\u202fPM.jpg","w":355,"h":640,"people":[2]},{"id":131,"file":"AIA 2026-11-06 at 1.40.58\u202fPM.jpg","w":355,"h":640,"people":[60]},{"id":132,"file":"AIA 2026-11-06 at 1.41.07\u202fPM.jpg","w":355,"h":640,"people":[10]},{"id":133,"file":"AIA 2026-11-06 at 1.41.25\u202fPM.jpg","w":355,"h":640,"people":[10,32]},{"id":134,"file":"AIA 2026-11-06 at 1.42.15\u202fPM.jpg","w":355,"h":640,"people":[2,10,20,32,60]},{"id":135,"file":"AIA 2026-11-06 at 1.42.47\u202fPM.jpg","w":355,"h":640,"people":[63,64]},{"id":136,"file":"AIA 2026-11-06 at 1.43.23\u202fPM.jpg","w":359,"h":640,"people":[58,62]},{"id":137,"file":"AIA 2026-11-06 at 1.43.33\u202fPM.jpg","w":355,"h":640,"people":[27]},{"id":138,"file":"AIA 2026-11-06 at 1.43.45\u202fPM.jpg","w":355,"h":640,"people":[20,32,76]},{"id":139,"file":"AIA 2026-11-06 at 1.44.06\u202fPM.jpg","w":355,"h":640,"people":[28,68]},{"id":140,"file":"AIA 2026-11-06 at 1.44.16\u202fPM.jpg","w":355,"h":640,"people":[20]},{"id":141,"file":"AIA 2026-11-06 at 1.44.27\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":142,"file":"AIA 2026-11-06 at 1.44.48\u202fPM.jpg","w":355,"h":640,"people":[73,89]},{"id":143,"file":"AIA 2026-11-06 at 1.45.02\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":144,"file":"AIA 2026-11-06 at 1.45.20\u202fPM.jpg","w":355,"h":640,"people":[64,77,79,90]},{"id":145,"file":"AIA 2026-11-06 at 1.45.44\u202fPM.jpg","w":355,"h":640,"people":[5,28]},{"id":146,"file":"AIA 2026-11-06 at 1.45.56\u202fPM.jpg","w":355,"h":640,"people":[15,70,80]},{"id":147,"file":"AIA 2026-11-06 at 1.46.06\u202fPM.jpg","w":355,"h":640,"people":[2]},{"id":148,"file":"AIA 2026-11-06 at 1.46.32\u202fPM.jpg","w":355,"h":640,"people":[2,9]},{"id":149,"file":"AIA 2026-11-06 at 1.46.46\u202fPM.jpg","w":355,"h":640,"people":[2,6,9]},{"id":150,"file":"AIA 2026-11-06 at 1.47.00\u202fPM.jpg","w":355,"h":640,"people":[9]},{"id":151,"file":"AIA 2026-11-06 at 1.47.13\u202fPM.jpg","w":355,"h":640,"people":[9,71]},{"id":152,"file":"AIA 2026-11-06 at 1.47.23\u202fPM.jpg","w":355,"h":640,"people":[3,9,75]},{"id":153,"file":"AIA 2026-11-06 at 1.47.39\u202fPM.jpg","w":355,"h":640,"people":[25,35,38]},{"id":154,"file":"AIA 2026-11-06 at 1.47.50\u202fPM.jpg","w":355,"h":640,"people":[22,29,33,41,70,95]},{"id":155,"file":"AIA 2026-11-06 at 1.48.03\u202fPM.jpg","w":355,"h":640,"people":[9,71]},{"id":156,"file":"AIA 2026-11-06 at 1.48.10\u202fPM.jpg","w":355,"h":640,"people":[63,76]},{"id":157,"file":"AIA 2026-11-06 at 1.48.17\u202fPM.jpg","w":355,"h":640,"people":[63,77]},{"id":158,"file":"AIA 2026-11-06 at 1.48.36\u202fPM.jpg","w":640,"h":358,"people":[3,27,71,91]},{"id":159,"file":"AIA 2026-11-06 at 1.49.01\u202fPM.jpg","w":355,"h":640,"people":[10,32,69,78]},{"id":160,"file":"AIA 2026-11-06 at 1.49.33\u202fPM.jpg","w":355,"h":640,"people":[3,71]},{"id":161,"file":"AIA 2026-11-06 at 1.50.09\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":162,"file":"AIA 2026-11-06 at 1.50.21\u202fPM.jpg","w":355,"h":640,"people":[9,21]},{"id":163,"file":"AIA 2026-11-06 at 1.50.39\u202fPM.jpg","w":355,"h":640,"people":[21]},{"id":164,"file":"AIA 2026-11-06 at 1.50.48\u202fPM.jpg","w":355,"h":640,"people":[3,71]},{"id":165,"file":"AIA 2026-11-06 at 1.51.14\u202fPM.jpg","w":355,"h":640,"people":[3,71]},{"id":166,"file":"AIA 2026-11-06 at 1.51.22\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":167,"file":"AIA 2026-11-06 at 1.52.14\u202fPM.jpg","w":355,"h":640,"people":[6,62]},{"id":168,"file":"AIA 2026-11-06 at 1.52.21\u202fPM.jpg","w":355,"h":640,"people":[8]},{"id":169,"file":"AIA 2026-11-06 at 1.52.26\u202fPM.jpg","w":355,"h":640,"people":[1,5,8]},{"id":170,"file":"AIA 2026-11-06 at 1.52.36\u202fPM.jpg","w":355,"h":640,"people":[66,81,82]},{"id":171,"file":"AIA 2026-11-06 at 1.52.50\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":172,"file":"AIA 2026-11-06 at 1.52.57\u202fPM.jpg","w":355,"h":640,"people":[56,83]},{"id":173,"file":"AIA 2026-11-06 at 1.53.10\u202fPM.jpg","w":355,"h":640,"people":[47]},{"id":174,"file":"AIA 2026-11-06 at 1.53.43\u202fPM.jpg","w":355,"h":640,"people":[4,12,31]},{"id":175,"file":"AIA 2026-11-06 at 1.53.49\u202fPM.jpg","w":355,"h":640,"people":[31,33,35]},{"id":176,"file":"AIA 2026-11-06 at 1.53.59\u202fPM.jpg","w":355,"h":640,"people":[5,21]},{"id":177,"file":"AIA 2026-11-06 at 1.54.05\u202fPM.jpg","w":355,"h":640,"people":[2,13,76]},{"id":178,"file":"AIA 2026-11-06 at 1.54.12\u202fPM.jpg","w":355,"h":640,"people":[44]},{"id":179,"file":"AIA 2026-11-06 at 1.54.20\u202fPM.jpg","w":355,"h":640,"people":[39]},{"id":180,"file":"AIA 2026-11-06 at 1.54.52\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":181,"file":"AIA 2026-11-06 at 1.55.02\u202fPM.jpg","w":355,"h":640,"people":[39]},{"id":182,"file":"AIA 2026-11-06 at 1.55.14\u202fPM.jpg","w":355,"h":640,"people":[2,63,76]},{"id":183,"file":"AIA 2026-11-06 at 1.55.23\u202fPM.jpg","w":355,"h":640,"people":[11,17,23]},{"id":184,"file":"AIA 2026-11-06 at 1.56.31\u202fPM.jpg","w":355,"h":640,"people":[3,71]},{"id":185,"file":"AIA 2026-11-06 at 1.56.38\u202fPM.jpg","w":355,"h":640,"people":[66,81,82]},{"id":186,"file":"AIA 2026-11-06 at 1.56.46\u202fPM.jpg","w":355,"h":640,"people":[71]},{"id":187,"file":"AIA 2026-11-06 at 1.56.59\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":188,"file":"AIA 2026-11-06 at 1.57.28\u202fPM.jpg","w":355,"h":640,"people":[12]},{"id":189,"file":"AIA 2026-11-06 at 1.57.38\u202fPM.jpg","w":355,"h":640,"people":[36]},{"id":190,"file":"AIA 2026-11-06 at 1.57.49\u202fPM.jpg","w":355,"h":640,"people":[78]},{"id":191,"file":"AIA 2026-11-06 at 1.58.21\u202fPM.jpg","w":355,"h":640,"people":[3,71]},{"id":192,"file":"AIA 2026-11-06 at 1.58.27\u202fPM.jpg","w":355,"h":640,"people":[2,11,21,32]},{"id":193,"file":"AIA 2026-11-06 at 1.58.39\u202fPM.jpg","w":355,"h":640,"people":[25,26,38,77]},{"id":194,"file":"AIA 2026-11-06 at 1.58.47\u202fPM.jpg","w":355,"h":640,"people":[15,29,35,73,79]},{"id":195,"file":"AIA 2026-11-06 at 1.58.55\u202fPM.jpg","w":355,"h":640,"people":[22,24,30,41,70,78,80,87]},{"id":196,"file":"AIA 2026-11-06 at 1.59.09\u202fPM.jpg","w":355,"h":640,"people":[8,84]},{"id":197,"file":"AIA 2026-11-06 at 1.59.15\u202fPM.jpg","w":355,"h":640,"people":[5,8,84]},{"id":198,"file":"AIA 2026-11-06 at 1.59.21\u202fPM.jpg","w":355,"h":640,"people":[28]},{"id":199,"file":"AIA 2026-11-06 at 1.59.26\u202fPM.jpg","w":355,"h":640,"people":[6,59,62]},{"id":200,"file":"AIA 2026-11-06 at 2.00.40\u202fPM.jpg","w":355,"h":640,"people":[2,11,13,20,21,23,32]},{"id":201,"file":"AIA 2026-11-06 at 2.00.47\u202fPM.jpg","w":355,"h":640,"people":[40,52]},{"id":202,"file":"AIA 2026-11-06 at 2.00.53\u202fPM.jpg","w":355,"h":640,"people":[48,85]},{"id":203,"file":"AIA 2026-11-06 at 2.01.47\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":204,"file":"AIA 2026-11-06 at 2.02.11\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":205,"file":"AIA 2026-11-06 at 2.02.19\u202fPM.jpg","w":355,"h":640,"people":[15,29,30,41,47,73,83]},{"id":206,"file":"AIA 2026-11-06 at 2.02.25\u202fPM.jpg","w":355,"h":640,"people":[3,8]},{"id":207,"file":"AIA 2026-11-06 at 2.02.31\u202fPM.jpg","w":355,"h":640,"people":[8,71]},{"id":208,"file":"AIA 2026-11-06 at 2.02.46\u202fPM.jpg","w":355,"h":640,"people":[5,8]},{"id":209,"file":"AIA 2026-11-06 at 2.02.57\u202fPM.jpg","w":355,"h":640,"people":[14,40,52]},{"id":210,"file":"AIA 2026-11-06 at 2.03.33\u202fPM.jpg","w":355,"h":640,"people":[]},{"id":211,"file":"AIA 2026-11-06 at 2.03.39\u202fPM.jpg","w":355,"h":640,"people":[48]},{"id":212,"file":"AIA 2026-11-06 at 2.03.47\u202fPM.jpg","w":355,"h":640,"people":[86]},{"id":213,"file":"AIA 2026-11-06 at 2.03.52\u202fPM.jpg","w":355,"h":640,"people":[86]},{"id":214,"file":"AIA 2026-11-06 at 2.04.19\u202fPM.jpg","w":355,"h":640,"people":[31]},{"id":215,"file":"AIA 2026-11-06 at 2.05.23\u202fPM.jpg","w":355,"h":640,"people":[1]},{"id":216,"file":"AIA 2026-11-06 at 2.05.34\u202fPM.jpg","w":355,"h":640,"people":[6,62,73]},{"id":217,"file":"AIA 2026-11-06 at 2.05.52\u202fPM.jpg","w":355,"h":640,"people":[27]},{"id":218,"file":"AIA 2026-11-06 at 2.06.25\u202fPM.jpg","w":355,"h":640,"people":[91]},{"id":219,"file":"AIA 2026-11-06 at 2.06.34\u202fPM.jpg","w":355,"h":640,"people":[3,8]},{"id":220,"file":"AIA 2026-11-06 at 2.06.40\u202fPM.jpg","w":355,"h":640,"people":[32]},{"id":221,"file":"AIA 2026-11-06 at 2.06.47\u202fPM.jpg","w":355,"h":640,"people":[6,14,18,62]},{"id":222,"file":"AIA 2026-11-06 at 2.07.01\u202fPM.jpg","w":355,"h":640,"people":[3]},{"id":223,"file":"AIA 2026-11-06 at 2.07.36\u202fPM.jpg","w":355,"h":640,"people":[5]},{"id":224,"file":"AIA 2026-11-06 at 2.07.45\u202fPM.jpg","w":355,"h":640,"people":[13,20]},{"id":225,"file":"AIA 2026-11-06 at 2.07.54\u202fPM.jpg","w":355,"h":640,"people":[1,8]},{"id":226,"file":"AIA 2026-11-06 at 2.08.10\u202fPM.jpg","w":355,"h":640,"people":[22,25,26,27,34,37,41,75,77,87]},{"id":227,"file":"AIA 2026-11-06 at 2.08.21\u202fPM.jpg","w":358,"h":640,"people":[22,24,30,34,41,87,92]},{"id":228,"file":"AIA 2026-11-06 at 2.08.42\u202fPM.jpg","w":355,"h":640,"people":[34]},{"id":229,"file":"AIA 2026-11-06 at 2.08.48\u202fPM.jpg","w":355,"h":640,"people":[48]},{"id":230,"file":"AIA 2026-11-06 at 2.10.35\u202fPM.jpg","w":355,"h":640,"people":[31]},{"id":231,"file":"AIA 2026-11-06 at 2.10.44\u202fPM.jpg","w":355,"h":640,"people":[31]},{"id":232,"file":"AIA 2026-11-06 at 2.10.57\u202fPM.jpg","w":359,"h":640,"people":[13]}]};
+const EVENT = 'The Project Before the Project (Nov 5, 2026)';
+const MAIL = 'info@cravtsman.com';
+const $ = id => document.getElementById(id);
+const P = Object.fromEntries(DATA.people.map(p => [p.id, p]));
+const PH = Object.fromEntries(DATA.photos.map(p => [p.id, p]));
+const pad = n => String(n).padStart(3, '0');
+const SPRITE = {"1":[0,0],"2":[160,0],"3":[320,0],"4":[480,0],"5":[640,0],"6":[800,0],"7":[960,0],"8":[1120,0],"9":[1280,0],"10":[1440,0],"11":[1600,0],"12":[1760,0],"13":[0,160],"14":[160,160],"15":[320,160],"16":[480,160],"17":[640,160],"18":[800,160],"19":[960,160],"20":[1120,160],"21":[1280,160],"22":[1440,160],"23":[1600,160],"24":[1760,160],"25":[0,320],"26":[160,320],"27":[320,320],"28":[480,320],"29":[640,320],"30":[800,320],"31":[960,320],"32":[1120,320],"33":[1280,320],"34":[1440,320],"35":[1600,320],"36":[1760,320],"37":[0,480],"38":[160,480],"39":[320,480],"40":[480,480],"41":[640,480],"42":[800,480],"43":[960,480],"44":[1120,480],"45":[1280,480],"46":[1440,480],"47":[1600,480],"48":[1760,480],"49":[0,640],"50":[160,640],"51":[320,640],"52":[480,640],"53":[640,640],"54":[800,640],"55":[960,640],"56":[1120,640],"57":[1280,640],"58":[1440,640],"59":[1600,640],"60":[1760,640],"61":[0,800],"62":[160,800],"63":[320,800],"64":[480,800],"65":[640,800],"66":[800,800],"67":[960,800],"68":[1120,800],"69":[1280,800],"70":[1440,800],"71":[1600,800],"72":[1760,800],"73":[0,960],"74":[160,960],"75":[320,960],"76":[480,960],"77":[640,960],"78":[800,960],"79":[960,960],"80":[1120,960],"81":[1280,960],"82":[1440,960],"83":[1600,960],"84":[1760,960],"85":[0,1120],"86":[160,1120],"87":[320,1120],"88":[480,1120],"89":[640,1120],"90":[800,1120],"91":[960,1120],"92":[1120,1120],"93":[1280,1120],"94":[1440,1120],"95":[1600,1120],"96":[1760,1120],"97":[0,1280],"98":[160,1280],"99":[320,1280],"100":[480,1280],"101":[640,1280],"102":[800,1280],"103":[960,1280]}, SPR = 160;
+const FACE = {};
+const BLANK = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3Crect width="1" height="1" fill="%23E6DED8"/%3E%3C/svg%3E';
+const faceSrc = id => FACE[id] || BLANK;
+(function loadFaces() {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas'); c.width = c.height = SPR;
+    const x = c.getContext('2d');
+    for (const id in SPRITE) {
+      x.clearRect(0, 0, SPR, SPR);
+      x.drawImage(img, SPRITE[id][0], SPRITE[id][1], SPR, SPR, 0, 0, SPR, SPR);
+      FACE[id] = c.toDataURL('image/jpeg', 0.86);
+    }
+    refresh();
+  };
+  img.src = '/faces.jpg';
+})();
+const label = id => P[id].name || `#${id}`;
+
+const state = { sel: [], mode: 'all', picks: new Set(), view: 'all', showAll: false, lbList: [], lbIdx: 0 };
+
+/* ---------- people finder ---------- */
+const FACES_START = 24;
+function renderFaces() {
+  const list = state.showAll ? DATA.people : DATA.people.slice(0, FACES_START);
+  // keep selected faces visible even when collapsed
+  state.sel.forEach(id => { if (!list.includes(P[id])) list.push(P[id]); });
+  $('faces').innerHTML = list.map(p => {
+    const i = state.sel.indexOf(p.id);
+    return `<button class="face${i >= 0 ? ' on' : ''}" data-id="${p.id}" type="button" aria-pressed="${i >= 0}" title="${p.name || 'Person ' + p.id} · ${p.photos.length} photo${p.photos.length > 1 ? 's' : ''}">
+      <img src="${faceSrc(p.id)}" alt="${p.name || 'Person ' + p.id}" loading="lazy"><span class="badge">✓</span>
+      ${p.name ? `<span class="n">${p.name}</span>` : ''}</button>`;
+  }).join('');
+  $('moreBtn').textContent = state.showAll ? 'Show fewer' : `Show all ${DATA.people.length} people`;
+  $('finderHint').textContent = state.sel.length
+    ? `${state.sel.length} selected. Tap again to remove.`
+    : 'Tap one or more faces.';
+  $('jump').hidden = !state.sel.length;
+  const solo = state.sel.length === 1 ? state.sel[0] : null;
+  $('meCard').hidden = !solo || !!(solo && P[solo].name);
+  if (solo) $('meFace').src = faceSrc(solo);
+  if (state.sel.length) $('jump').textContent = `See ${filtered().length} photo${filtered().length === 1 ? '' : 's'} ↓`;
+}
+$('faces').addEventListener('click', e => {
+  const b = e.target.closest('.face'); if (!b) return;
+  toggleSel(+b.dataset.id);
+});
+$('jump').onclick = () => document.querySelector('.bar').scrollIntoView({ behavior: 'smooth' });
+$('moreBtn').onclick = () => { state.showAll = !state.showAll; renderFaces(); };
+
+function toggleSel(id) {
+  const i = state.sel.indexOf(id);
+  i >= 0 ? state.sel.splice(i, 1) : state.sel.push(id);
+  if (state.view !== 'all') setView('all');
+  refresh();
+}
+function setSel(ids, mode) {
+  state.sel = [...ids]; if (mode) state.mode = mode;
+  setView('all'); refresh();
+  document.querySelector('.bar').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ---------- filtering ---------- */
+function filtered() {
+  if (!state.sel.length) return DATA.photos;
+  return DATA.photos.filter(ph => state.mode === 'all'
+    ? state.sel.every(id => ph.people.includes(id))
+    : state.sel.some(id => ph.people.includes(id)));
+}
+
+const check = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function renderGrid() {
+  const list = filtered();
+  state.lbList = list.map(p => p.id);
+  $('grid').innerHTML = list.map(ph => `
+    <figure class="tile" data-id="${ph.id}" style="aspect-ratio:${ph.w}/${ph.h}">
+      <img src="/thumbs/${pad(ph.id)}.jpg" alt="Event photo ${ph.id}" loading="lazy" width="${ph.w}" height="${ph.h}">
+      <span class="tnum">No. ${ph.id}</span>
+      <button class="pick${state.picks.has(ph.id) ? ' on' : ''}" type="button" aria-label="Select photo ${ph.id} for high-res" aria-pressed="${state.picks.has(ph.id)}">${check}</button>
+    </figure>`).join('');
+  $('empty').hidden = list.length > 0;
+  $('count').textContent = state.sel.length
+    ? `${list.length} of ${DATA.photos.length} photos`
+    : `${DATA.photos.length} photos · ${DATA.people.length} people`;
+}
+$('grid').addEventListener('click', e => {
+  const t = e.target.closest('.tile'); if (!t) return;
+  const id = +t.dataset.id;
+  if (e.target.closest('.pick')) { togglePick(id); return; }
+  openLb(state.lbList.indexOf(id));
+});
+
+function renderFilterBar() {
+  $('filter').hidden = !state.sel.length || state.view !== 'all';
+  $('chips').innerHTML = state.sel.map(id => `<img src="${faceSrc(id)}" alt="${label(id)}">`).join('');
+  $('modeSeg').style.display = state.sel.length > 1 ? '' : 'none';
+  $('modeSeg').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === state.mode));
+}
+$('modeSeg').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.mode = b.dataset.mode; refresh();
+});
+$('clearBtn').onclick = () => { state.sel = []; refresh(); };
+
+/* ---------- groups ---------- */
+const GROUPS = (() => {
+  const seen = new Map();
+  DATA.photos.forEach(ph => {
+    if (ph.people.length < 2) return;
+    const key = ph.people.join(',');
+    if (!seen.has(key)) seen.set(key, ph.people);
+  });
+  return [...seen.values()].map(ids => ({
+    ids, photos: DATA.photos.filter(ph => ids.every(id => ph.people.includes(id))).map(p => p.id)
+  }));
+})();
+function renderGroups() {
+  const by = $('groupSort').value;
+  const list = [...GROUPS].sort((a, b) => by === 'size'
+    ? b.ids.length - a.ids.length || b.photos.length - a.photos.length
+    : b.photos.length - a.photos.length || b.ids.length - a.ids.length);
+  $('groups').innerHTML = list.map(g => `
+    <button class="group" type="button" data-ids="${g.ids.join(',')}">
+      <div class="gfaces">${g.ids.slice(0, 7).map(id => `<img src="${faceSrc(id)}" alt="${label(id)}" loading="lazy">`).join('')}${g.ids.length > 7 ? `<span style="align-self:center;margin-left:6px;font-size:13px;color:var(--muted)">+${g.ids.length - 7}</span>` : ''}</div>
+      <div class="gstrip">${g.photos.slice(0, 3).map(id => `<img src="/thumbs/${pad(id)}.jpg" alt="" loading="lazy">`).join('')}</div>
+      <div class="gmeta"><b>${g.ids.length} people</b><span>${g.photos.length} photo${g.photos.length > 1 ? 's' : ''} together</span></div>
+    </button>`).join('');
+  $('count').textContent = `${GROUPS.length} groups`;
+}
+$('groups').addEventListener('click', e => {
+  const g = e.target.closest('.group'); if (!g) return;
+  setSel(g.dataset.ids.split(',').map(Number), 'all');
+});
+$('groupSort').onchange = renderGroups;
+
+/* ---------- views ---------- */
+function setView(v) {
+  state.view = v;
+  $('tabAll').setAttribute('aria-selected', v === 'all');
+  $('tabGroups').setAttribute('aria-selected', v === 'groups');
+  $('grid').hidden = v !== 'all';
+  $('groups').hidden = v !== 'groups';
+  $('sortWrap').hidden = v !== 'groups';
+  if (v === 'groups') $('empty').hidden = true;
+  const h = v === 'groups' ? '#groups' : '';
+  if (location.hash !== h) history.replaceState(null, '', h || location.pathname + location.search);
+}
+$('tabAll').onclick = () => { setView('all'); refresh(); };
+$('tabGroups').onclick = () => { setView('groups'); refresh(); };
+
+function refresh() {
+  renderFaces(); renderFilterBar();
+  state.view === 'all' ? renderGrid() : renderGroups();
+  renderCart();
+}
+
+/* ---------- high-res picks ---------- */
+function togglePick(id) {
+  state.picks.has(id) ? state.picks.delete(id) : state.picks.add(id);
+  document.querySelectorAll(`.tile[data-id="${id}"] .pick`).forEach(b => {
+    b.classList.toggle('on', state.picks.has(id)); b.setAttribute('aria-pressed', state.picks.has(id));
+  });
+  renderCart(); if ($('lb').classList.contains('open')) renderLbSel();
+  try { localStorage.setItem('picks', JSON.stringify([...state.picks])); } catch (e) {}
+}
+function renderCart() {
+  const n = state.picks.size;
+  $('cart').classList.toggle('show', n > 0);
+  $('cartTxt').textContent = `${n} photo${n === 1 ? '' : 's'} selected`;
+}
+$('cartClear').onclick = () => { state.picks.clear(); try { localStorage.removeItem('picks'); } catch (e) {} refresh(); };
+function requestText() {
+  const ids = [...state.picks].sort((a, b) => a - b);
+  return `Hello,\n\nI'd like the full-resolution versions of these photos from ${EVENT}:\n\n` +
+    ids.map(id => `• No. ${id} (${PH[id].file})`).join('\n') +
+    `\n\nName:\nThank you!`;
+}
+function openMail(title, intro, subject, body) {
+  $('mh').textContent = title;
+  $('mIntro').innerHTML = intro;
+  $('reqText').value = body;
+  $('mailBtn').href = `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  $('copyNote').textContent = "If the email button doesn't open your mail app, copy the text and email it to info@cravtsman.com.";
+  $('modal').classList.add('open');
+}
+$('requestBtn').onclick = () => openMail('Request high-res photos',
+  'Send this list to <span class="addr">info@cravtsman.com</span> and we\'ll reply with the full-resolution files.',
+  'High-res photo request: The Project Before the Project', requestText());
+$('meBtn').onclick = () => {
+  const id = state.sel[0];
+  openMail('Add your name tag',
+    'Fill in the lines below and email them to <span class="addr">info@cravtsman.com</span>. Once approved, your name and company will show on this face. Your email address is never shown on the page.',
+    `Name tag request: face #${id}, The Project Before the Project`,
+    `Hello,\n\nThis is me: face #${id} on the event photo page for ${EVENT}.\n\nName as it should appear: \nCompany (optional): \nTitle (optional): \n\nI agree to have my name and the details above shown with my photos on this page.\n\nThank you!`);
+};
+$('copyBtn').onclick = async () => {
+  try { await navigator.clipboard.writeText($('reqText').value); $('copyNote').textContent = 'Copied. Paste it into an email to info@cravtsman.com.'; }
+  catch (e) { $('reqText').select(); $('copyNote').textContent = 'Select the text above and copy it, then email it to info@cravtsman.com.'; }
+};
+$('modalClose').onclick = () => $('modal').classList.remove('open');
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') $('modal').classList.remove('open'); });
+
+/* ---------- lightbox ---------- */
+function openLb(i) { state.lbIdx = i; $('lb').classList.add('open'); document.body.style.overflow = 'hidden'; renderLb(); }
+function closeLb() { $('lb').classList.remove('open'); document.body.style.overflow = ''; }
+function renderLb() {
+  const id = state.lbList[state.lbIdx], ph = PH[id];
+  $('lbImg').src = `/thumbs/${pad(id)}.jpg`;
+  const full = new Image(); full.onload = () => { if (state.lbList[state.lbIdx] === id) $('lbImg').src = full.src; };
+  full.src = `/photos/${pad(id)}.jpg`;
+  $('lbImg').alt = `Event photo ${id}`;
+  $('lbTitle').textContent = `Photo No. ${id} · ${state.lbIdx + 1} of ${state.lbList.length}`;
+  $('lbPeople').innerHTML = ph.people.length
+    ? `<span>In this photo:</span>` + ph.people.map(pid => `<button type="button" data-id="${pid}" title="See all photos of ${label(pid)}"><img src="${faceSrc(pid)}" alt="${label(pid)}"></button>`).join('')
+    : '<span>No faces recognized in this photo.</span>';
+  renderLbSel();
+  [-1, 1].forEach(d => { const n = state.lbList[state.lbIdx + d]; if (n) new Image().src = `/photos/${pad(n)}.jpg`; });
+}
+function renderLbSel() {
+  const on = state.picks.has(state.lbList[state.lbIdx]);
+  $('lbSel').classList.toggle('on', on);
+  $('lbSel').style.color = on ? 'var(--ink)' : '#fff';
+  $('lbSel').textContent = on ? '✓ Selected for high-res' : 'Select for high-res';
+}
+function step(d) { const n = state.lbIdx + d; if (n >= 0 && n < state.lbList.length) { state.lbIdx = n; renderLb(); } }
+$('lbPrev').onclick = () => step(-1);
+$('lbNext').onclick = () => step(1);
+$('lbClose').onclick = closeLb;
+$('lbSel').onclick = () => togglePick(state.lbList[state.lbIdx]);
+$('lbPeople').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  closeLb(); setSel([+b.dataset.id]);
+});
+document.addEventListener('keydown', e => {
+  if ($('modal').classList.contains('open')) { if (e.key === 'Escape') $('modal').classList.remove('open'); return; }
+  if (!$('lb').classList.contains('open')) return;
+  if (e.key === 'Escape') closeLb();
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+let tx = null;
+$('lb').addEventListener('touchstart', e => { tx = e.touches[0].clientX; }, { passive: true });
+$('lb').addEventListener('touchend', e => {
+  if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1);
+});
+
+/* ---------- start ---------- */
+try { (JSON.parse(localStorage.getItem('picks')) || []).forEach(id => PH[id] && state.picks.add(id)); } catch (e) {}
+setView(location.hash === '#groups' ? 'groups' : 'all');
+window.addEventListener('hashchange', () => { setView(location.hash === '#groups' ? 'groups' : 'all'); refresh(); });
+refresh();
+</script>
+</body>
+</html>
